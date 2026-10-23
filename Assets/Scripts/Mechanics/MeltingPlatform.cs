@@ -28,7 +28,8 @@ public class MeltingPlatform : MonoBehaviour
             return;
         }
 
-        bool isPlayerOnTop = collision.transform.position.y >= platformCollider.bounds.max.y - 0.1f;
+        // Pivot değil collider'ın en alt noktası (ayak tabanı) kullanılır
+        bool isPlayerOnTop = collision.collider.bounds.min.y >= platformCollider.bounds.max.y - 0.1f;
         if (!isPlayerOnTop)
         {
             return;

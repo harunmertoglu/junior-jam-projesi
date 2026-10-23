@@ -124,9 +124,8 @@ public static class TestSceneBuilder
         orbitalFollow.Radius = 6f;
         orbitalFollow.TargetOffset = new Vector3(0f, 0.8f, 0f);
         orbitalFollow.TrackerSettings.BindingMode = BindingMode.WorldSpace;
-        // Bir süre dokunulmazsa kamera karakterin baktığı yönün arkasına döner
-        orbitalFollow.RecenteringTarget = CinemachineOrbitalFollow.ReferenceFrames.TrackingTarget;
-        orbitalFollow.HorizontalAxis.Recentering = new InputAxis.RecenteringSettings { Enabled = true, Wait = 2f, Time = 1f };
+        // Otomatik arkaya dönme kapalı, kamerayı sadece oyuncu çevirir
+        orbitalFollow.HorizontalAxis.Recentering = new InputAxis.RecenteringSettings { Enabled = false, Wait = 2f, Time = 1f };
 
         cameraObject.AddComponent<CinemachineRotationComposer>();
 

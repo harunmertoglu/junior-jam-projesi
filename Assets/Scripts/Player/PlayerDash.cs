@@ -10,6 +10,10 @@ public class PlayerDash : MonoBehaviour
     public static event Action OnRecalled;
     public static event Action OnRecallPointExpired;
 
+    [Header("References")]
+    // Boş bırakılırsa Camera.main kullanılır
+    [SerializeField] Transform cameraTransform;
+
     [Header("Dash")]
     [SerializeField] float dashDistance = 6f;
     [SerializeField] float dashDuration = 0.18f;
@@ -40,6 +44,11 @@ public class PlayerDash : MonoBehaviour
     {
         playerRigidbody = GetComponent<Rigidbody>();
         playerMovement = GetComponent<PlayerMovement>();
+
+        if (cameraTransform == null)
+        {
+            cameraTransform = Camera.main.transform;
+        }
     }
 
     void OnEnable()
@@ -101,7 +110,9 @@ public class PlayerDash : MonoBehaviour
         isDashing = true;
         canDash = false;
 
-        Vector3 dashDirection = playerMovement.GetFacingDirection();
+        Vector3 dashDirection = GetDashDirection();
+        // Karakter dash yönüne baksın, yoksa geri geri uçabilir
+        playerMovement.SetFacingDirection(dashDirection);
         CreateRecallPoint(playerRigidbody.position);
         OnDashStarted?.Invoke(recallPosition);
 
@@ -118,6 +129,26 @@ public class PlayerDash : MonoBehaviour
         }
 
         EndDash(dashDirection * dashExitSpeed);
+    }
+
+    Vector3 GetDashDirection()
+    {
+        // Kameranın baktığı yön = kameradan karaktere doğru
+        Vector3 dashDirection = cameraTransform.forward;
+
+        // Yerdeyken aşağı doğru dash zemine girer, o yüzden düzleştiriyoruz
+        if (isPlayerGrounded && dashDirection.y < 0f)
+        {
+            dashDirection.y = 0f;
+        }
+
+        // Kamera tam yukarıdan bakıyorsa düzleşince yön kalmaz, karakterin baktığı yöne at
+        if (dashDirection.sqrMagnitude < 0.01f)
+        {
+            return playerMovement.GetFacingDirection();
+        }
+
+        return dashDirection.normalized;
     }
 
     void EndDash(Vector3 exitVelocity)
