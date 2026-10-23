@@ -13,6 +13,8 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] float playerRunSpeed = 6f;
+    // Sprint basılıyken koşu hızı bununla çarpılır: 6 * 1.3 = 7.8 m/sn
+    [SerializeField] float sprintSpeedMultiplier = 1.3f;
     // Hedef hıza ne kadar çabuk ulaşılacağı. Küçük değer = kayma
     [SerializeField] float groundControl = 12f;
     [SerializeField] float slipperyGroundControl = 1f;
@@ -34,12 +36,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float groundCheckDistance = 0.15f;
 
     Rigidbody playerRigidbody;
+    Collider playerCollider;
     Vector2 moveInput;
     Vector3 moveDirection;
     Vector3 playerVelocity;
     bool isGrounded;
     bool isDashing;
     bool isJumpHeld;
+    bool isSprintHeld;
     float lastGroundedTime = -10f;
     float lastJumpPressedTime = -10f;
     float currentSlipperiness;
@@ -47,6 +51,7 @@ public class PlayerMovement : MonoBehaviour
     void Awake()
     {
         playerRigidbody = GetComponent<Rigidbody>();
+        playerCollider = GetComponent<Collider>();
 
         // Yerçekimini kendimiz uyguluyoruz, dönmeyi de Visual yapıyor
         playerRigidbody.useGravity = false;
@@ -65,6 +70,7 @@ public class PlayerMovement : MonoBehaviour
     {
         InputManager.OnMove += MoveInputs;
         InputManager.OnJump += JumpInputs;
+        InputManager.OnSprint += SprintInputs;
         PlayerDash.OnDashStarted += DashStarted;
         PlayerDash.OnDashEnded += DashEnded;
     }
@@ -73,6 +79,7 @@ public class PlayerMovement : MonoBehaviour
     {
         InputManager.OnMove -= MoveInputs;
         InputManager.OnJump -= JumpInputs;
+        InputManager.OnSprint -= SprintInputs;
         PlayerDash.OnDashStarted -= DashStarted;
         PlayerDash.OnDashEnded -= DashEnded;
     }
@@ -90,6 +97,11 @@ public class PlayerMovement : MonoBehaviour
         {
             lastJumpPressedTime = Time.time;
         }
+    }
+
+    void SprintInputs(bool value)
+    {
+        isSprintHeld = value;
     }
 
     void DashStarted(Vector3 dashStartPosition)
@@ -151,8 +163,12 @@ public class PlayerMovement : MonoBehaviour
 
     void CheckGround()
     {
+        // Ayak = collider'ın en alt noktası, pivot nerede olursa olsun doğru çalışır
+        Vector3 playerFeetPosition = playerCollider.bounds.center;
+        playerFeetPosition.y = playerCollider.bounds.min.y;
+
         // Ayakların biraz üstünden aşağı doğru küre atıyoruz
-        Vector3 castOrigin = playerRigidbody.position + Vector3.up * (groundCheckRadius + 0.05f);
+        Vector3 castOrigin = playerFeetPosition + Vector3.up * (groundCheckRadius + 0.05f);
         RaycastHit groundHit;
         bool hitGround = Physics.SphereCast(castOrigin, groundCheckRadius, Vector3.down, out groundHit, groundCheckDistance + 0.05f, groundLayers, QueryTriggerInteraction.Ignore);
 
@@ -177,7 +193,8 @@ public class PlayerMovement : MonoBehaviour
     void SetPlayerMovement()
     {
         Vector3 horizontalVelocity = new Vector3(playerVelocity.x, 0f, playerVelocity.z);
-        Vector3 targetVelocity = moveDirection * playerRunSpeed;
+        float currentRunSpeed = isSprintHeld ? playerRunSpeed * sprintSpeedMultiplier : playerRunSpeed;
+        Vector3 targetVelocity = moveDirection * currentRunSpeed;
 
         float control = isGrounded ? Mathf.Lerp(groundControl, slipperyGroundControl, currentSlipperiness) : airControl;
         horizontalVelocity = Vector3.Lerp(horizontalVelocity, targetVelocity, control * Time.fixedDeltaTime);
@@ -219,6 +236,24 @@ public class PlayerMovement : MonoBehaviour
     public Vector3 GetFacingDirection()
     {
         return playerVisualTransform.forward;
+    }
+
+    // Karakteri anında bu yöne çevirir, sadece yatayda (dash başında kullanılıyor)
+    public void SetFacingDirection(Vector3 direction)
+    {
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.01f)
+        {
+            return;
+        }
+
+        playerVisualTransform.rotation = Quaternion.LookRotation(direction);
+    }
+
+    // Pivot ayakların ne kadar üstünde (pivot ayaktaysa 0)
+    public float GetFeetHeight()
+    {
+        return playerRigidbody.position.y - playerCollider.bounds.min.y;
     }
 
     public void TeleportTo(Vector3 targetPosition)

@@ -29,7 +29,8 @@ public class FadingLeaf : MonoBehaviour
         }
 
         // Yandan değmek sayılmaz, oyuncunun ayakları yaprağın üst yüzeyinde olmalı
-        bool isPlayerOnTop = collision.transform.position.y >= leafCollider.bounds.max.y - 0.1f;
+        // Pivot değil collider'ın en alt noktası (ayak tabanı) kullanılır, pivot nerede olursa olsun çalışır
+        bool isPlayerOnTop = collision.collider.bounds.min.y >= leafCollider.bounds.max.y - 0.1f;
         if (!isPlayerOnTop)
         {
             return;

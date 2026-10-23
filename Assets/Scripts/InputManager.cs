@@ -12,6 +12,7 @@ public class InputManager : MonoBehaviour
     public static event Action<Vector2, bool> OnLook;
     public static event Action<bool> OnJump;
     public static event Action OnDash;
+    public static event Action<bool> OnSprint;
     public static event Action OnPause;
 
     void Awake()
@@ -38,6 +39,9 @@ public class InputManager : MonoBehaviour
 
         inputActions.Player.Dash.performed += DashPerformed;
 
+        inputActions.Player.Sprint.performed += SprintPerformed;
+        inputActions.Player.Sprint.canceled += SprintCanceled;
+
         inputActions.Player.Pause.performed += PausePerformed;
 
         inputActions.Player.Enable();
@@ -60,6 +64,9 @@ public class InputManager : MonoBehaviour
         inputActions.Player.Jump.canceled -= JumpCanceled;
 
         inputActions.Player.Dash.performed -= DashPerformed;
+
+        inputActions.Player.Sprint.performed -= SprintPerformed;
+        inputActions.Player.Sprint.canceled -= SprintCanceled;
 
         inputActions.Player.Pause.performed -= PausePerformed;
 
@@ -132,6 +139,18 @@ public class InputManager : MonoBehaviour
     void DashPerformed(InputAction.CallbackContext ctx)
     {
         OnDash?.Invoke();
+    }
+    #endregion
+
+    #region Sprint
+    // true = basıldı, false = bırakıldı (basılı tutulduğu sürece koşar)
+    void SprintPerformed(InputAction.CallbackContext ctx)
+    {
+        OnSprint?.Invoke(true);
+    }
+    void SprintCanceled(InputAction.CallbackContext ctx)
+    {
+        OnSprint?.Invoke(false);
     }
     #endregion
 

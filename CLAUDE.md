@@ -1,11 +1,35 @@
 # Claude için çalışma kuralları
 
-## Proje: Junyorjem (3D platformer)
-- Yağmurluklu küçük bir kız, sonbahardan kışa doğru ilerlemeye çalışıyor.
-- Level mekanikleri:
-  - Kaygan alanlar
-  - Üstüne atlayınca solup dökülen yapraklar
-- Karakterin gücü: İleriye doğru dash atar, arkasında sonbaharı anımsatan kahverengi bir iz bırakır. Tuşa tekrar basınca o iz konumuna geri döner.
+## Proje: Sonbahardan Kışa (3D platformer, game jam)
+Kaynak: "Sonbahardan Kışa — Oyun Tasarım Dokümanı" (GDD). Kararlar oradan gelir; kapsam dışı bir şey önermeden önce GDD'ye bak.
+
+- **Jam:** 48 saat, 3-4 kişilik ekip, tema Sonbahar. Unity 6 URP, PC/Windows build (itch.io). Astro Bot tarzı. Oyun 5-10 dk.
+- **Hikâye:** Sonbahar ruhu olan yağmurluklu küçük kız 5-6 adayı geçip kış adasına ulaşır. Görünmeyen yaz ruhu (3. adadan itibaren) engel koyar.
+- **Karakter:** Unity'nin hazır şekillerinden kodla kurulur, rig yok, animasyonun tamamı koddan. ~1,1 m boy, büyük kafa, kırmızı yağmurluk, sarı bot, iki örgü. Ayak altında yuvarlak gölge.
+  - Animasyonlar: koşma, havada kollar yukarı, kayarken denge, dash'te öne uzama, squash & stretch, sallanan örgüler, göz kırpma.
+- **Kontroller:** Klavye+fare ve gamepad. Hareket kameraya göre.
+  - Hareket WASD/oklar | sol stick · Kamera fare | sağ stick · Zıpla Space | A (basılı = yüksek)
+  - Dash/geri dön Shift, E, sağ tık | X, RB · Duraklat Esc | Start
+- **Hareket değerleri:** koşma 6 m/sn, zıplama 2,2 m, coyote 0,12 sn, jump buffer 0,12 sn, düşüş çıkıştan hızlı.
+- **Kamera:** arkadan/yukarıdan takip, oyuncu çevirebilir, dokunulmazsa yavaşça koşu yönüne döner, duvara girmez.
+- **Dash ve geri dönüş:**
+  1. Dash 0,18 sn'de 6 m ileri, bu sürede yerçekimi yok.
+  2. Başlangıçta yerde yaprak halkası, yol boyunca kahverengi yaprak izi.
+  3. Tuşa tekrar basınca anında başlangıç noktasına döner, iz savrulup dağılır.
+  4. Geri dönüş noktası süresi bitince yanıp sönerek kaybolur. Süre adaya göre: 10, 9, 8, 7, 6, 5 sn.
+  5. Yere basmadan en fazla 1 dash. Havadaki noktaya dönülürse yere inmeden yeni dash yok.
+  6. Taşınan ilerleme nesnesi geri dönüşte kızla gelir.
+  7. Düşüp checkpoint'e dönünce geri dönüş noktası silinir.
+- **Mekanikler:**
+  - Islak zemin (ada 1): kaydırır, kışta buz = daha kaygan.
+  - Solan yaprak (ada 2): basınca 0,9 sn'de solar, kırılıp düşer, 3 sn sonra geri gelir.
+  - Yükselip alçalan alev (ada 3), eriyen platform (ada 4), alev duvarı (ada 5).
+  - İlerleme nesnesi (tohum, şalter) yolu/kapıyı açar (ada 3).
+  - Checkpoint (ada 1).
+  - **Ölüm yok:** can/sağlık yok, düşünce ya da ateşe değince son checkpoint'ten anında devam.
+- **Mevsim:** 0 (sonbahar) – 1 (kış) arası tek değer, her ada ~0,2 artırır. Renk, kar örtüsü, parçacık, ışık/sis ve oynanış (buz, geri dönüş süresi, engel hızı) buna bağlı.
+- **Arayüz:** ana menü, duraklatma, ayarlar (ses, fare hassasiyeti), bitiş ekranı. Oyun içinde HUD yok. Kayıt sistemi yok.
+- **Kesinlikle yok:** boss, yaz ruhunun görünmesi, toplanabilir/puan/can, diyalog, kayıt, 6'dan fazla ada, WebGL.
 
 ## Dil
 - Her zaman **Türkçe** konuş. Kod, değişken isimleri ve teknik terimler İngilizce kalabilir.
@@ -47,6 +71,7 @@
 - Sistemler gelen girdiyi bir alana yazar; `Update`/`FixedUpdate` o alanı kullanır.
 - Sistemler birbirlerinin sonuçlarını da event ile dinler (ör. `CubeMovement.OnJumped` → animasyon, ses).
 - Fizik ile görsel ayrıdır: Rigidbody ve collider ana objede, mesh `Visual` child'ında durur.
+- Hareket **Rigidbody fiziğiyle** yönetilir (dash gibi mekanikler de gelecek). `CharacterController` kullanma.
 - Yeni Input System kullanırım. Input Actions'ı proje geneli (`InputSystem.actions`) ya da Inspector'dan atarım.
 
 ## Nasıl çalışmalısın

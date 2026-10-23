@@ -35,7 +35,9 @@ public class RespawnManager : MonoBehaviour
 
     public void RespawnPlayer()
     {
-        playerMovement.TeleportTo(currentCheckpoint.position);
+        // Checkpoint yerde durur, ayaklar oraya gelsin diye pivotu ayak yüksekliği kadar yukarı koyuyoruz
+        Vector3 respawnPosition = currentCheckpoint.position + Vector3.up * playerMovement.GetFeetHeight();
+        playerMovement.TeleportTo(respawnPosition);
         OnPlayerRespawned?.Invoke();
     }
 }
