@@ -8,14 +8,11 @@ public class InputManager : MonoBehaviour
     InputActions inputActions;
 
     public static event Action<Vector2> OnMove;
-    public static event Action<Vector2> OnLook;
-    public static event Action<bool> OnSprint;
-    public static event Action<bool> OnCrouch;
+    // bool: girdi fareden mi geldi (fare delta'sı deltaTime ile çarpılmaz, stick çarpılır)
+    public static event Action<Vector2, bool> OnLook;
     public static event Action<bool> OnJump;
-    public static event Action<bool> OnAttack;
-    public static event Action<bool> OnInteract;
-    public static event Action OnPrevious;
-    public static event Action OnNext;
+    public static event Action OnDash;
+    public static event Action OnPause;
 
     void Awake()
     {
@@ -36,24 +33,12 @@ public class InputManager : MonoBehaviour
         inputActions.Player.Look.performed += LookPerformed;
         inputActions.Player.Look.canceled += LookCanceled;
 
-        inputActions.Player.Sprint.performed += SprintPerformed;
-        inputActions.Player.Sprint.canceled += SprintCanceled;
-
-        inputActions.Player.Crouch.performed += CrouchPerformed;
-        inputActions.Player.Crouch.canceled += CrouchCanceled;
-
         inputActions.Player.Jump.performed += JumpPerformed;
         inputActions.Player.Jump.canceled += JumpCanceled;
 
-        inputActions.Player.Attack.performed += AttackPerformed;
-        inputActions.Player.Attack.canceled += AttackCanceled;
+        inputActions.Player.Dash.performed += DashPerformed;
 
-        inputActions.Player.Interact.performed += InteractPerformed;
-        inputActions.Player.Interact.canceled += InteractCanceled;
-
-        inputActions.Player.Previous.performed += PreviousPerformed;
-
-        inputActions.Player.Next.performed += NextPerformed;
+        inputActions.Player.Pause.performed += PausePerformed;
 
         inputActions.Player.Enable();
     }
@@ -71,24 +56,12 @@ public class InputManager : MonoBehaviour
         inputActions.Player.Look.performed -= LookPerformed;
         inputActions.Player.Look.canceled -= LookCanceled;
 
-        inputActions.Player.Sprint.performed -= SprintPerformed;
-        inputActions.Player.Sprint.canceled -= SprintCanceled;
-
-        inputActions.Player.Crouch.performed -= CrouchPerformed;
-        inputActions.Player.Crouch.canceled -= CrouchCanceled;
-
         inputActions.Player.Jump.performed -= JumpPerformed;
         inputActions.Player.Jump.canceled -= JumpCanceled;
 
-        inputActions.Player.Attack.performed -= AttackPerformed;
-        inputActions.Player.Attack.canceled -= AttackCanceled;
+        inputActions.Player.Dash.performed -= DashPerformed;
 
-        inputActions.Player.Interact.performed -= InteractPerformed;
-        inputActions.Player.Interact.canceled -= InteractCanceled;
-
-        inputActions.Player.Previous.performed -= PreviousPerformed;
-
-        inputActions.Player.Next.performed -= NextPerformed;
+        inputActions.Player.Pause.performed -= PausePerformed;
 
         inputActions.Player.Disable();
     }
@@ -135,33 +108,12 @@ public class InputManager : MonoBehaviour
     #region Look
     void LookPerformed(InputAction.CallbackContext ctx)
     {
-        OnLook?.Invoke(ctx.ReadValue<Vector2>());
+        bool isMouse = ctx.control.device is Pointer;
+        OnLook?.Invoke(ctx.ReadValue<Vector2>(), isMouse);
     }
     void LookCanceled(InputAction.CallbackContext ctx)
     {
-        OnLook?.Invoke(Vector2.zero);
-    }
-    #endregion
-
-    #region Sprint
-    void SprintPerformed(InputAction.CallbackContext ctx)
-    {
-        OnSprint?.Invoke(true);
-    }
-    void SprintCanceled(InputAction.CallbackContext ctx)
-    {
-        OnSprint?.Invoke(false);
-    }
-    #endregion
-
-    #region Crouch
-    void CrouchPerformed(InputAction.CallbackContext ctx)
-    {
-        OnCrouch?.Invoke(true);
-    }
-    void CrouchCanceled(InputAction.CallbackContext ctx)
-    {
-        OnCrouch?.Invoke(false);
+        OnLook?.Invoke(Vector2.zero, false);
     }
     #endregion
 
@@ -176,39 +128,17 @@ public class InputManager : MonoBehaviour
     }
     #endregion
 
-    #region Attack
-    void AttackPerformed(InputAction.CallbackContext ctx)
+    #region Dash
+    void DashPerformed(InputAction.CallbackContext ctx)
     {
-        OnAttack?.Invoke(true);
-    }
-    void AttackCanceled(InputAction.CallbackContext ctx)
-    {
-        OnAttack?.Invoke(false);
+        OnDash?.Invoke();
     }
     #endregion
 
-    #region Interact
-    void InteractPerformed(InputAction.CallbackContext ctx)
+    #region Pause
+    void PausePerformed(InputAction.CallbackContext ctx)
     {
-        OnInteract?.Invoke(true);
-    }
-    void InteractCanceled(InputAction.CallbackContext ctx)
-    {
-        OnInteract?.Invoke(false);
-    }
-    #endregion
-
-    #region Previous
-    void PreviousPerformed(InputAction.CallbackContext ctx)
-    {
-        OnPrevious?.Invoke();
-    }
-    #endregion
-
-    #region Next
-    void NextPerformed(InputAction.CallbackContext ctx)
-    {
-        OnNext?.Invoke();
+        OnPause?.Invoke();
     }
     #endregion
 }

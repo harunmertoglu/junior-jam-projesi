@@ -1,0 +1,41 @@
+using System;
+using UnityEngine;
+
+public class RespawnManager : MonoBehaviour
+{
+    public static RespawnManager Instance;
+
+    public static event Action OnPlayerRespawned;
+
+    [Header("References")]
+    [SerializeField] PlayerMovement playerMovement;
+    // Adanın başlangıç noktası, henüz checkpoint alınmadıysa buraya dönülür
+    [SerializeField] Transform startPoint;
+
+    Transform currentCheckpoint;
+
+    void Awake()
+    {
+        Instance = this;
+        currentCheckpoint = startPoint;
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    public void SetCheckpoint(Transform checkpoint)
+    {
+        currentCheckpoint = checkpoint;
+    }
+
+    public void RespawnPlayer()
+    {
+        playerMovement.TeleportTo(currentCheckpoint.position);
+        OnPlayerRespawned?.Invoke();
+    }
+}
