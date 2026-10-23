@@ -40,4 +40,12 @@ public class RespawnManager : MonoBehaviour
         playerMovement.TeleportTo(respawnPosition);
         OnPlayerRespawned?.Invoke();
     }
+
+    // IslandExit çağırır: oyuncuyu sonraki adanın başına taşır, orası yeni checkpoint olur.
+    // OnPlayerRespawned de çalışır, böylece dash geri dönüş noktası silinir ve taşınan tohum oyuncuyla gelir.
+    public void MovePlayerToIsland(Transform islandStartPoint)
+    {
+        SetCheckpoint(islandStartPoint);
+        RespawnPlayer();
+    }
 }
