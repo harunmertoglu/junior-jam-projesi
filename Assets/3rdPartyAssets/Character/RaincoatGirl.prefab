@@ -354,8 +354,8 @@ MonoBehaviour:
   dashDistance: 6
   dashDuration: 0.18
   dashExitSpeed: 6
-  defaultRecallDuration: 10
-  blinkDuration: 2
+  defaultRecallDuration: 4
+  blinkDuration: 1
   blinkInterval: 0.15
   recallMarkerPrefab: {fileID: 2992804326441659815, guid: bb2303fced93fa84f863e9e5c25f7303, type: 3}
 --- !u!114 &1130007423174354421

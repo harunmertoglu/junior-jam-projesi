@@ -13,8 +13,8 @@ public class SeasonManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float seasonValue;
 
     [Header("Recall")]
-    // Ada 1: 10, Ada 2: 9 ... Ada 6: 5
-    [SerializeField] float recallDuration = 10f;
+    // Ada 1: 4, Ada 2: 3
+    [SerializeField] float recallDuration = 4f;
 
     void Awake()
     {
