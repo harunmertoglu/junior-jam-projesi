@@ -1,6 +1,9 @@
 using UnityEngine;
 
-// Her ada sahnesinde bir tane bulunur. Değerler adaya göre Inspector'dan girilir.
+// Tüm adalar TEK gameplay sahnesinde (TestScene). Bu yüzden sahnede bir tane SeasonManager var.
+// Inspector değerleri ilk adanınki; oyuncu bir adaya girince IslandZone SetIslandSeason ile değiştirir.
+// Mevsimi kullanan scriptler (GroundSurface, MeltingPlatform, RisingFlame, PlayerDash) değeri her seferinde
+// buradan okur, bu yüzden değer değişince kendiliğinden uyum sağlarlar. Değeri bir yerde saklamayın.
 public class SeasonManager : MonoBehaviour
 {
     public static SeasonManager Instance;
@@ -34,5 +37,12 @@ public class SeasonManager : MonoBehaviour
     public float GetRecallDuration()
     {
         return recallDuration;
+    }
+
+    // IslandZone çağırır: oyuncu yeni bir adaya girdi
+    public void SetIslandSeason(float seasonValue, float recallDuration)
+    {
+        this.seasonValue = Mathf.Clamp01(seasonValue);
+        this.recallDuration = recallDuration;
     }
 }

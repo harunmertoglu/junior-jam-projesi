@@ -29,9 +29,6 @@ public class RisingFlame : MonoBehaviour
 
     void Start()
     {
-        float seasonValue = SeasonManager.Instance != null ? SeasonManager.Instance.GetSeasonValue() : 0f;
-        timeMultiplier = Mathf.Lerp(1f, winterTimeMultiplier, seasonValue);
-
         SetFlameHeight(loweredHeight);
         StartCoroutine(FlameRoutine());
     }
@@ -42,6 +39,9 @@ public class RisingFlame : MonoBehaviour
 
         while (true)
         {
+            // Mevsim adadan adaya değişir (IslandZone), bu yüzden her turun başında yeniden okunur
+            UpdateTimeMultiplier();
+
             yield return new WaitForSeconds(loweredDuration * timeMultiplier);
 
             OnFlameRising?.Invoke();
@@ -66,6 +66,12 @@ public class RisingFlame : MonoBehaviour
         }
 
         SetFlameHeight(toHeight);
+    }
+
+    void UpdateTimeMultiplier()
+    {
+        float seasonValue = SeasonManager.Instance != null ? SeasonManager.Instance.GetSeasonValue() : 0f;
+        timeMultiplier = Mathf.Lerp(1f, winterTimeMultiplier, seasonValue);
     }
 
     void SetFlameHeight(float height)
