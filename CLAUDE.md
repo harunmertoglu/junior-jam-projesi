@@ -74,6 +74,14 @@ Kaynak: "Sonbahardan Kışa — Oyun Tasarım Dokümanı" (GDD). Kararlar oradan
 - Hareket **Rigidbody fiziğiyle** yönetilir (dash gibi mekanikler de gelecek). `CharacterController` kullanma.
 - Yeni Input System kullanırım. Input Actions'ı proje geneli (`InputSystem.actions`) ya da Inspector'dan atarım.
 
+## Sahne yapısı ve ekip kuralları
+- **Tüm adalar TEK gameplay sahnesinde:** `Assets/TestScene/TestScene.unity` (ileride adı değişebilir). Sahibi Selim, başkası doğrudan değiştirmez. Diğer sahneler sadece başlangıç/bitiş sinematikleri.
+- Ada geçişi sahne yüklemez: `IslandExit` oyuncuyu sonraki adanın başlangıç noktasına taşır, son ada bitiş sinematiğini yükler.
+- Mevsim sahneye göre değil adaya göre değişir: her adayı kaplayan `IslandZone` trigger'ı, oyuncu girince `SeasonManager.SetIslandSeason` çağırır. Mevsimi okuyan kod değeri saklamasın, her kullanımda `SeasonManager.Instance` üzerinden okusun.
+- Environment tasarımı `UpdateScene1` / `UpdateScene2` gibi kopya sahnelerde yapılır, tek kök obje altında **prefab** olarak TestScene'e bir kez konur.
+- Karakter `Assets/3rdPartyAssets/Character/RaincoatGirl.prefab`. Karakter değişiklikleri sahnede değil prefab'da yapılır.
+- Unity sahne ve prefab dosyaları git'te birleştirilemez: her sahne/prefab dosyasının aynı anda tek sahibi olsun. Kod dosyaları paylaşılabilir.
+
 ## Nasıl çalışmalısın
 - **Bir seferde tek sistem yaz.** Dört script'i birden atma; ben anladıktan sonra diğerine geç.
 - Yeni bir yapı, fonksiyon ya da matematik kullanacaksan **önce kısaca ne işe yaradığını anlat.**

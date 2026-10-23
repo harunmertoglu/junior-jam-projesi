@@ -1,16 +1,29 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// Adanın sonundaki trigger. Build Settings'teki bir sonraki sahneyi yükler.
-// Sıra: 0 MainMenu, 1-5 Island1-5, 6 End
+// Adanın sonundaki trigger. Tüm adalar TEK gameplay sahnesinde (TestScene), bu yüzden sahne yüklemez:
+// oyuncuyu sonraki adanın başlangıç noktasına taşır. Mevsimi oradaki IslandZone değiştirir.
+// Son adada Next Island Start Point boş bırakılır: o zaman Build Settings'teki sonraki sahne
+// (bitiş sinematiği) yüklenir. Sıra: başlangıç sinematiği, gameplay (TestScene), bitiş sinematiği.
+// Geçiş efekti (kararma ya da rüzgârın yaprakla taşıması) sonra eklenecek.
 public class IslandExit : MonoBehaviour
 {
+    [Header("Next Island")]
+    // Sonraki adanın başındaki boş obje. Son adada boş bırak.
+    [SerializeField] Transform nextIslandStartPoint;
+
     bool isLoading;
 
     void OnTriggerEnter(Collider other)
     {
         if (isLoading || !other.CompareTag("Player"))
         {
+            return;
+        }
+
+        if (nextIslandStartPoint != null)
+        {
+            RespawnManager.Instance.MovePlayerToIsland(nextIslandStartPoint);
             return;
         }
 
