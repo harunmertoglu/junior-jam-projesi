@@ -12561,10 +12561,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3740903904869592878, guid: c7585f2f4ec303f4db004bd9b3ba0694, type: 3}
-      propertyPath: slipperyGroundControl
-      value: 0.8
-      objectReference: {fileID: 0}
     - target: {fileID: 7227967733881624492, guid: c7585f2f4ec303f4db004bd9b3ba0694, type: 3}
       propertyPath: m_Name
       value: RaincoatGirl
