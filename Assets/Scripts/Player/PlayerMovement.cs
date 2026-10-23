@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float sprintSpeedMultiplier = 1.3f;
     // Hedef hıza ne kadar çabuk ulaşılacağı. Küçük değer = kayma
     [SerializeField] float groundControl = 12f;
-    [SerializeField] float slipperyGroundControl = 0.8f;
+    [SerializeField] float slipperyGroundControl = 1f;
     [SerializeField] float airControl = 6f;
     [SerializeField] float visualRotationSpeed = 15f;
 
