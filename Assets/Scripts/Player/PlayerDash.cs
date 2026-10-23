@@ -111,9 +111,12 @@ public class PlayerDash : MonoBehaviour
         canDash = false;
 
         Vector3 dashDirection = GetDashDirection();
-        // Karakter dash yönüne baksın, yoksa geri geri uçabilir
+        // Karakter dash yönüne (kameranın baktığı yöne) baksın, yoksa geri geri uçabilir
         playerMovement.SetFacingDirection(dashDirection);
-        CreateRecallPoint(playerRigidbody.position);
+
+        // Dönüş işareti de aynı yöne baksın: karakter az önce dash yönüne çevrildi
+        Quaternion recallRotation = Quaternion.LookRotation(playerMovement.GetFacingDirection());
+        CreateRecallPoint(playerRigidbody.position, recallRotation);
         OnDashStarted?.Invoke(recallPosition);
 
         // 6 m / 0.18 sn ≈ 33 m/sn
@@ -176,14 +179,14 @@ public class PlayerDash : MonoBehaviour
         OnRecalled?.Invoke();
     }
 
-    void CreateRecallPoint(Vector3 position)
+    void CreateRecallPoint(Vector3 position, Quaternion rotation)
     {
         recallPosition = position;
         hasRecallPoint = true;
 
         if (recallMarkerPrefab != null)
         {
-            recallMarker = Instantiate(recallMarkerPrefab, position, Quaternion.identity);
+            recallMarker = Instantiate(recallMarkerPrefab, position, rotation);
         }
 
         recallTimerCoroutine = StartCoroutine(RecallTimerRoutine());
