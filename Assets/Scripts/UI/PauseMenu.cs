@@ -63,14 +63,15 @@ public class PauseMenu : MonoBehaviour
         SetPaused(false);
     }
 
-    // Kararma bitene kadar oyun duraklatılmış kalır, timeScale'i SceneTransition yüklemeden önce 1 yapar
     public void RestartIsland()
     {
-        SceneTransition.LoadSceneWithFade(SceneManager.GetActiveScene().buildIndex);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void ReturnToMainMenu()
     {
-        SceneTransition.LoadSceneWithFade(mainMenuSceneIndex);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(mainMenuSceneIndex);
     }
 }

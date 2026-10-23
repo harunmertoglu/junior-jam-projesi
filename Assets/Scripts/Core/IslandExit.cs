@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// Adanın sonundaki trigger. Build Settings'teki bir sonraki sahneyi kararma ile yükler.
+// Adanın sonundaki trigger. Build Settings'teki bir sonraki sahneyi yükler.
 // Sıra: 0 MainMenu, 1-5 Island1-5, 6 End
 public class IslandExit : MonoBehaviour
 {
@@ -15,6 +15,6 @@ public class IslandExit : MonoBehaviour
         }
 
         isLoading = true;
-        SceneTransition.LoadSceneWithFade(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }
