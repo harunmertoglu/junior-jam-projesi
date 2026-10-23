@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 
 // Bitiş sahnesi: final metni ve credits. Kar efekti görsel aşamada eklenecek.
 public class EndScreen : MonoBehaviour
@@ -25,6 +24,6 @@ public class EndScreen : MonoBehaviour
     // Butonun OnClick'ine Inspector'dan bağlanır
     public void ReturnToMainMenu()
     {
-        SceneManager.LoadScene(mainMenuSceneIndex);
+        SceneTransition.LoadSceneWithFade(mainMenuSceneIndex);
     }
 }

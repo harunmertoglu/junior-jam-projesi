@@ -21,6 +21,19 @@ public static class TestSceneBuilder
     [MenuItem("Junyorjem/Build Test Scene")]
     public static void BuildTestScene()
     {
+        // TestScene'i elle düzenleyen olabilir (karakter, kamera ayarları), yanlışlıkla silinmesin
+        bool sceneExists = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath) != null;
+        if (sceneExists && !Application.isBatchMode)
+        {
+            bool isConfirmed = EditorUtility.DisplayDialog("TestScene silinecek",
+                "TestScene baştan kurulacak. Sahnede elle yapılan HER ŞEY (karakter modeli, kamera ayarları) silinir.\n\nEmin misin?",
+                "Evet, baştan kur", "Vazgeç");
+            if (!isConfirmed)
+            {
+                return;
+            }
+        }
+
         CreateFolders();
         int playerLayer = CreatePlayerLayer();
         // Player layer'ı hariç her şey zemin sayılır

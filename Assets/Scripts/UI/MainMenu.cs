@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 
 // Ana menü: Başla -> giriş metni -> Ada 1. Çık oyunu kapatır.
 public class MainMenu : MonoBehaviour
@@ -47,7 +46,7 @@ public class MainMenu : MonoBehaviour
 
     public void ContinueFromIntro()
     {
-        SceneManager.LoadScene(firstIslandSceneIndex);
+        SceneTransition.LoadSceneWithFade(firstIslandSceneIndex);
     }
 
     public void QuitGame()
