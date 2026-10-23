@@ -6,8 +6,8 @@ public class GroundSurface : MonoBehaviour
 {
     [Header("Slipperiness")]
     // 0 = normal zemin, 1 = tamamen kaygan
-    [SerializeField, Range(0f, 1f)] float autumnSlipperiness = 0.6f;
-    [SerializeField, Range(0f, 1f)] float winterSlipperiness = 0.9f;
+    [SerializeField, Range(0f, 1f)] float autumnSlipperiness = 0.85f;
+    [SerializeField, Range(0f, 1f)] float winterSlipperiness = 0.97f;
 
     public float GetSlipperiness()
     {

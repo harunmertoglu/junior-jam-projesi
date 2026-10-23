@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float sprintSpeedMultiplier = 1.3f;
     // Hedef hıza ne kadar çabuk ulaşılacağı. Küçük değer = kayma
     [SerializeField] float groundControl = 12f;
-    [SerializeField] float slipperyGroundControl = 1.5f;
+    [SerializeField] float slipperyGroundControl = 0.8f;
     [SerializeField] float airControl = 6f;
     [SerializeField] float visualRotationSpeed = 15f;
 
@@ -29,6 +29,16 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float maxFallSpeed = 25f;
     [SerializeField] float coyoteTime = 0.12f;
     [SerializeField] float jumpBufferTime = 0.12f;
+
+    [Header("Slope Slide")]
+    // Kaygan eğimde aşağı çeken kuvvetin çarpanı. 0 = eğimde kayma yok
+    [SerializeField] float slopeSlideStrength = 1f;
+    [SerializeField] float maxSlopeSlideSpeed = 14f;
+
+    [Header("Launch")]
+    // Fırlatılınca bu süre boyunca kontrol azalır, boost hemen sönmez
+    [SerializeField] float launchDuration = 0.6f;
+    [SerializeField] float launchControl = 0.5f;
 
     [Header("Ground Check")]
     [SerializeField] LayerMask groundLayers;
@@ -47,6 +57,8 @@ public class PlayerMovement : MonoBehaviour
     float lastGroundedTime = -10f;
     float lastJumpPressedTime = -10f;
     float currentSlipperiness;
+    float launchEndTime = -10f;
+    Vector3 groundNormal = Vector3.up;
 
     void Awake()
     {
@@ -132,6 +144,7 @@ public class PlayerMovement : MonoBehaviour
 
         playerVelocity = playerRigidbody.linearVelocity;
         SetPlayerMovement();
+        ApplySlopeSlide();
         ApplyGravity();
         TryJump();
         playerRigidbody.linearVelocity = playerVelocity;
@@ -187,6 +200,13 @@ public class PlayerMovement : MonoBehaviour
 
             GroundSurface groundSurface = groundHit.collider.GetComponent<GroundSurface>();
             currentSlipperiness = groundSurface != null ? groundSurface.GetSlipperiness() : 0f;
+
+            // Zeminin yüzey yönü: düz zeminde (0, 1, 0), eğimde yana yatık
+            groundNormal = groundHit.normal;
+        }
+        else
+        {
+            groundNormal = Vector3.up;
         }
     }
 
@@ -197,16 +217,54 @@ public class PlayerMovement : MonoBehaviour
         Vector3 targetVelocity = moveDirection * currentRunSpeed;
 
         float control = isGrounded ? Mathf.Lerp(groundControl, slipperyGroundControl, currentSlipperiness) : airControl;
+        if (IsLaunched())
+        {
+            control = launchControl;
+        }
         horizontalVelocity = Vector3.Lerp(horizontalVelocity, targetVelocity, control * Time.fixedDeltaTime);
 
         playerVelocity.x = horizontalVelocity.x;
         playerVelocity.z = horizontalVelocity.z;
     }
 
+    void ApplySlopeSlide()
+    {
+        // Sadece yerdeyken ve kaygan zeminde
+        if (!isGrounded || currentSlipperiness <= 0f)
+        {
+            return;
+        }
+
+        // Yerçekimini zemine yansıtınca eğimin aşağı yönü çıkar. Düz zeminde sıfır olur
+        Vector3 slopeDownDirection = Vector3.ProjectOnPlane(Vector3.down, groundNormal);
+
+        // Bu yönün uzunluğu eğimin sinüsü: 0° = 0, 20° = 0.34, 30° = 0.5
+        float slopeSteepness = slopeDownDirection.magnitude;
+        if (slopeSteepness < 0.01f)
+        {
+            return;
+        }
+        slopeDownDirection.Normalize();
+
+        // Eğim dikleştikçe ve zemin kayganlaştıkça daha çok hızlan
+        float slideAcceleration = gravity * slopeSteepness * currentSlipperiness * slopeSlideStrength;
+        playerVelocity += slopeDownDirection * slideAcceleration * Time.fixedDeltaTime;
+
+        // Uzun bir yokuşta sonsuza kadar hızlanmasın
+        Vector3 horizontalVelocity = new Vector3(playerVelocity.x, 0f, playerVelocity.z);
+        if (horizontalVelocity.magnitude > maxSlopeSlideSpeed)
+        {
+            horizontalVelocity = horizontalVelocity.normalized * maxSlopeSlideSpeed;
+            playerVelocity.x = horizontalVelocity.x;
+            playerVelocity.z = horizontalVelocity.z;
+        }
+    }
+
     void ApplyGravity()
     {
         // Düşerken ya da tuş bırakılınca daha güçlü yerçekimi: kısa basış = alçak zıplama
-        bool useFallGravity = playerVelocity.y < 0f || !isJumpHeld;
+        // Fırlatılınca tuş basılı sayılır, yükselişi kısalmasın
+        bool useFallGravity = playerVelocity.y < 0f || (!isJumpHeld && !IsLaunched());
         float gravityMultiplier = useFallGravity ? fallGravityMultiplier : 1f;
 
         playerVelocity.y -= gravity * gravityMultiplier * Time.fixedDeltaTime;
@@ -231,6 +289,18 @@ public class PlayerMovement : MonoBehaviour
         lastGroundedTime = -10f;
 
         OnJumped?.Invoke();
+    }
+
+    bool IsLaunched()
+    {
+        return Time.time < launchEndTime;
+    }
+
+    // Zıplatma pedi gibi şeyler kullanır. Hızı verir, kısa süre kontrolü azaltır
+    public void Launch(Vector3 launchVelocity)
+    {
+        playerRigidbody.linearVelocity = launchVelocity;
+        launchEndTime = Time.time + launchDuration;
     }
 
     public Vector3 GetFacingDirection()
