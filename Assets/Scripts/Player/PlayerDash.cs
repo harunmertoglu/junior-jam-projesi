@@ -21,10 +21,10 @@ public class PlayerDash : MonoBehaviour
     [SerializeField] float dashExitSpeed = 6f;
 
     [Header("Recall")]
-    // SeasonManager yoksa kullanılır
-    [SerializeField] float defaultRecallDuration = 10f;
+    // Geri dönüş noktasının kaç saniye kalacağı
+    [SerializeField] float defaultRecallDuration = 4f;
     // Sürenin son kaç saniyesinde işaret yanıp sönsün
-    [SerializeField] float blinkDuration = 2f;
+    [SerializeField] float blinkDuration = 1f;
     [SerializeField] float blinkInterval = 0.15f;
     // Geri dönüş noktasını gösteren placeholder (ör. yassı silindir)
     [SerializeField] GameObject recallMarkerPrefab;
@@ -203,7 +203,8 @@ public class PlayerDash : MonoBehaviour
 
     IEnumerator RecallTimerRoutine()
     {
-        float recallDuration = SeasonManager.Instance != null ? SeasonManager.Instance.GetRecallDuration() : defaultRecallDuration;
+        // Şimdilik süre sadece buradan gelir. Ada sistemi kurulunca adaya göre değişecek
+        float recallDuration = defaultRecallDuration;
 
         yield return new WaitForSeconds(Mathf.Max(0f, recallDuration - blinkDuration));
 
