@@ -10,10 +10,18 @@ using UnityEngine.Rendering.Universal;
 public class SeasonVisuals : MonoBehaviour
 {
     [Header("Sky")]
-    [SerializeField] Color autumnSkyTint = new Color(0.65f, 0.5f, 0.4f);
-    [SerializeField] Color winterSkyTint = new Color(0.45f, 0.55f, 0.7f);
-    [SerializeField] float autumnSkyExposure = 1.3f;
-    [SerializeField] float winterSkyExposure = 1f;
+    // Unity'nin hazır gökyüzü (Skybox/Procedural) için. Asıl etkiyi atmosfer kalınlığı yapar:
+    // kalın atmosfer = turuncu, sıcak ufuk (sonbahar), ince atmosfer = soluk, soğuk mavi (kış)
+    [SerializeField] float autumnAtmosphereThickness = 1.8f;
+    [SerializeField] float winterAtmosphereThickness = 0.75f;
+    // Tint boya gibi değil, ışığın havada saçılmasını değiştirir: 0.5 nötr, açık renk = daha soluk gök
+    [SerializeField] Color autumnSkyTint = new Color(0.5f, 0.5f, 0.5f);
+    [SerializeField] Color winterSkyTint = new Color(0.8f, 0.82f, 0.86f);
+    // Ufkun altının rengi
+    [SerializeField] Color autumnGroundColor = new Color(0.45f, 0.33f, 0.25f);
+    [SerializeField] Color winterGroundColor = new Color(0.8f, 0.84f, 0.9f);
+    [SerializeField] float autumnSkyExposure = 1.25f;
+    [SerializeField] float winterSkyExposure = 1.5f;
 
     [Header("Light")]
     // Boşsa sahnedeki Directional Light kullanılır
@@ -136,7 +144,9 @@ public class SeasonVisuals : MonoBehaviour
             return;
         }
 
+        skyboxMaterial.SetFloat("_AtmosphereThickness", Mathf.Lerp(autumnAtmosphereThickness, winterAtmosphereThickness, seasonValue));
         skyboxMaterial.SetColor("_SkyTint", Color.Lerp(autumnSkyTint, winterSkyTint, seasonValue));
+        skyboxMaterial.SetColor("_GroundColor", Color.Lerp(autumnGroundColor, winterGroundColor, seasonValue));
         skyboxMaterial.SetFloat("_Exposure", Mathf.Lerp(autumnSkyExposure, winterSkyExposure, seasonValue));
     }
 
