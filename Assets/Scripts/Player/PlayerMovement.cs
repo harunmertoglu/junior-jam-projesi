@@ -63,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
     Transform glideCarrier;
     Vector3 glideOffset;
     GlideObject currentGlideObject;
+    bool isLockedToSurface;
 
     void Awake()
     {
@@ -124,6 +125,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isGliding)
             DetachFromGlider(currentGlideObject != null ? currentGlideObject.CurrentVelocity : Vector3.zero);
+        if (isLockedToSurface)
+            UnlockFromSurface();
         isDashing = true;
     }
 
@@ -162,6 +165,22 @@ public class PlayerMovement : MonoBehaviour
         playerVelocity = playerRigidbody.linearVelocity;
         SetPlayerMovement();
         ApplySlopeSlide();
+
+        if (isLockedToSurface)
+        {
+            lastGroundedTime = Time.time; // yüzeyde kilitliyken zıplama geçerli
+            TryJump();
+            if (playerVelocity.y > 0f) // zıpladı, bağı kır
+            {
+                isLockedToSurface = false;
+                playerRigidbody.linearVelocity = playerVelocity;
+                return;
+            }
+            playerVelocity.y = 0f;
+            playerRigidbody.linearVelocity = playerVelocity;
+            return;
+        }
+
         ApplyGravity();
         TryJump();
         playerRigidbody.linearVelocity = playerVelocity;
@@ -233,7 +252,7 @@ public class PlayerMovement : MonoBehaviour
         float currentRunSpeed = isSprintHeld ? playerRunSpeed * sprintSpeedMultiplier : playerRunSpeed;
         Vector3 targetVelocity = moveDirection * currentRunSpeed;
 
-        float control = isGrounded ? Mathf.Lerp(groundControl, slipperyGroundControl, currentSlipperiness) : airControl;
+        float control = (isGrounded || isLockedToSurface) ? Mathf.Lerp(groundControl, slipperyGroundControl, currentSlipperiness) : airControl;
         if (IsLaunched())
         {
             control = launchControl;
@@ -377,8 +396,21 @@ public class PlayerMovement : MonoBehaviour
         return playerRigidbody.position.y - playerCollider.bounds.min.y;
     }
 
+    public void LockToSurface()
+    {
+        isLockedToSurface = true;
+        playerRigidbody.linearVelocity = new Vector3(playerRigidbody.linearVelocity.x, 0f, playerRigidbody.linearVelocity.z);
+    }
+
+    public void UnlockFromSurface()
+    {
+        isLockedToSurface = false;
+    }
+
     public void TeleportTo(Vector3 targetPosition)
     {
+        if (isLockedToSurface)
+            UnlockFromSurface();
         playerRigidbody.linearVelocity = Vector3.zero;
         playerRigidbody.position = targetPosition;
         transform.position = targetPosition;
