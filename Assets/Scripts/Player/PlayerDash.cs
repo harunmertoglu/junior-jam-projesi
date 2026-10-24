@@ -24,7 +24,7 @@ public class PlayerDash : MonoBehaviour
     // Geri dönüş noktasının kaç saniye kalacağı
     [SerializeField] float defaultRecallDuration = 4f;
     // Sürenin son kaç saniyesinde işaret yanıp sönsün
-    [SerializeField] float blinkDuration;
+    [SerializeField] float blinkDuration = 1f;
     [SerializeField] float blinkInterval = 0.15f;
     // Geri dönüş noktasını gösteren placeholder (ör. yassı silindir)
     [SerializeField] GameObject recallMarkerPrefab;
