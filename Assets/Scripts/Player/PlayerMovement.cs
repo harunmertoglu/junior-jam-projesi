@@ -56,6 +56,7 @@ public class PlayerMovement : MonoBehaviour
     bool isDashing;
     bool isJumpHeld;
     bool isSprintHeld;
+    bool isInDialogue;
     float lastGroundedTime = -10f;
     float lastJumpPressedTime = -10f;
     float currentSlipperiness;
@@ -92,6 +93,7 @@ public class PlayerMovement : MonoBehaviour
         InputManager.OnSprint += SprintInputs;
         PlayerDash.OnDashStarted += DashStarted;
         PlayerDash.OnDashEnded += DashEnded;
+        DialogueManager.OnDialogueChanged += DialogueChanged;
     }
 
     void OnDisable()
@@ -101,6 +103,7 @@ public class PlayerMovement : MonoBehaviour
         InputManager.OnSprint -= SprintInputs;
         PlayerDash.OnDashStarted -= DashStarted;
         PlayerDash.OnDashEnded -= DashEnded;
+        DialogueManager.OnDialogueChanged -= DialogueChanged;
     }
 
     void MoveInputs(Vector2 moveInput)
@@ -110,6 +113,13 @@ public class PlayerMovement : MonoBehaviour
 
     void JumpInputs(bool value)
     {
+        // Diyalogda zıplama tuşu sonraki satıra geçer, karakteri zıplatmaz
+        if (isInDialogue)
+        {
+            isJumpHeld = false;
+            return;
+        }
+
         isJumpHeld = value;
 
         if (value)
@@ -137,6 +147,11 @@ public class PlayerMovement : MonoBehaviour
     void DashEnded()
     {
         isDashing = false;
+    }
+
+    void DialogueChanged(bool isOpen)
+    {
+        isInDialogue = isOpen;
     }
 
     void Update()
@@ -201,6 +216,12 @@ public class PlayerMovement : MonoBehaviour
         cameraDirectionRight.Normalize();
 
         moveDirection = cameraDirectionForward * moveInput.y + cameraDirectionRight * moveInput.x;
+
+        // Diyalogda karakter yürümez, yerinde yavaşça durur
+        if (isInDialogue)
+        {
+            moveDirection = Vector3.zero;
+        }
     }
 
     void UpdateVisualRotation()
