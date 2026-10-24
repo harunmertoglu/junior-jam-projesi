@@ -36,6 +36,7 @@ public class PlayerDash : MonoBehaviour
     bool hasRecallPoint;
     bool isDashing;
     bool isPlayerGrounded;
+    bool isInDialogue;
     Coroutine dashCoroutine;
     Coroutine recallTimerCoroutine;
 
@@ -55,6 +56,7 @@ public class PlayerDash : MonoBehaviour
         InputManager.OnDash += DashInputs;
         PlayerMovement.OnGroundedChanged += GroundedChanged;
         RespawnManager.OnPlayerRespawned += PlayerRespawned;
+        DialogueManager.OnDialogueChanged += DialogueChanged;
     }
 
     void OnDisable()
@@ -62,11 +64,18 @@ public class PlayerDash : MonoBehaviour
         InputManager.OnDash -= DashInputs;
         PlayerMovement.OnGroundedChanged -= GroundedChanged;
         RespawnManager.OnPlayerRespawned -= PlayerRespawned;
+        DialogueManager.OnDialogueChanged -= DialogueChanged;
+    }
+
+    void DialogueChanged(bool isOpen)
+    {
+        isInDialogue = isOpen;
     }
 
     void DashInputs()
     {
-        if (isDashing)
+        // Diyalogda dash ve geri dönüş yok
+        if (isDashing || isInDialogue)
         {
             return;
         }
