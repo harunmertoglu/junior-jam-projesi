@@ -93,14 +93,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 8302347643271995093}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2600fdf79b2fdfd46a391510c58ad644, type: 3}
+  m_Script: {fileID: 11500000, guid: 598075973cda448ebc365d23b3ca56f2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SnowflakePlatform
-  platformVisual: {fileID: 4151461265919461288}
+  m_EditorClassIdentifier: Assembly-CSharp::RideableSnowflake
   platformCollider: {fileID: 7566666480012361527}
-  meltSpeed: 0.3
-  refreezeSpeed: 0.5
-  respawnDelay: 3
+  platformVisual: {fileID: 4151461265919461288}
+  meltDuration: 3
+  refreezeDuration: 2
+  respawnDelay: 2
+  onTopTolerance: 0.15
 --- !u!1 &9124822261502003362
 GameObject:
   m_ObjectHideFlags: 0

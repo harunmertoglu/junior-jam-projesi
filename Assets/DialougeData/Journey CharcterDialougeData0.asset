@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cb74f1869393c446b111ecd5cc4f2b5, type: 3}
+<<<<<<<< HEAD:Assets/DialougeData/Journey CharcterDialougeData0.asset
   m_Name: Journey CharcterDialougeData0
+========
+  m_Name: SumorWaitingDialouge0
+>>>>>>>> tmp-yusuf-push:Assets/DialougeData/SumorWaitingDialouge0.asset
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
   lines:
-  - speakerName: Traveller
-    text: 'Hi. It seems you are struggling in your first cycle... '
-  - speakerName: Traveller
-    text: "Not quite a talktive type \u0131 guess."
-  - speakerName: Traveller
-    text: Anyway you know your mission. You need to complete the journey to protect
-      the cycle.
+  - speakerName: Sumor
+    text: "Y\xFCz\xFCn\xFCn yanmas\u0131n\u0131 m\u0131 istiyorsun. Kaybol!!"

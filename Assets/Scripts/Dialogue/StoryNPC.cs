@@ -5,7 +5,7 @@ using UnityEngine;
 // Konuşmalar listesi sırayla söylenir ama her biri hikaye belli bir adıma gelince açılır.
 // Örnek: 1. konuşma "Gerekli Adım 0", bitince hikaye 1 olur. 2. konuşma "Gerekli Adım 3":
 // oyuncu girip çıksa da 2. konuşma gelmez, hikaye 3'e ulaşınca (başka bir NPC ya da StoryStepZone ile) söylenir.
-// Yeni bir şey yoksa waitingDialogue söylenir (boşsa susar).
+// Söylenecek yeni konuşma yoksa en son söylenen konuşmanın waitingDialogue'u söylenir (boşsa susar).
 // Kurulum: karaktere bu script + Is Trigger işaretli bir collider (eklenince SphereCollider kendiliğinden gelir).
 public class StoryNPC : MonoBehaviour
 {
@@ -17,12 +17,12 @@ public class StoryNPC : MonoBehaviour
         public int requiredStep;
         // Konuşma bitince hikaye bu adıma geçer. 0 = hikayeyi ilerletmez
         public int stepAfter;
+        // Bu konuşma söylendikten sonra, sıradaki açılana kadar tekrar gelinirse: ör. "Hadi, kışı bul". Boş bırakılabilir
+        public DialogueData waitingDialogue;
     }
 
     [Header("Dialogue")]
     [SerializeField] Conversation[] conversations;
-    // Söylenecek yeni bir şey yokken (sırası gelmedi ya da hepsini söyledi): ör. "Yolun açık olsun". Boş bırakılabilir
-    [SerializeField] DialogueData waitingDialogue;
 
     [Header("Look")]
     // Konuşurken oyuncuya dönsün (sadece yatayda)
@@ -59,7 +59,7 @@ public class StoryNPC : MonoBehaviour
         }
 
         Conversation nextConversation = GetNextConversation();
-        DialogueData dialogueToPlay = nextConversation != null ? nextConversation.dialogue : waitingDialogue;
+        DialogueData dialogueToPlay = nextConversation != null ? nextConversation.dialogue : GetWaitingDialogue();
         if (dialogueToPlay == null)
         {
             return;
@@ -80,6 +80,17 @@ public class StoryNPC : MonoBehaviour
 
         Conversation conversation = conversations[conversationIndex];
         return StoryProgress.GetStep() >= conversation.requiredStep ? conversation : null;
+    }
+
+    // En son söylenen konuşmanın bekleme diyaloğu. Henüz hiçbiri söylenmediyse null
+    DialogueData GetWaitingDialogue()
+    {
+        if (conversations != null && conversationIndex > 0 && conversationIndex <= conversations.Length)
+        {
+            return conversations[conversationIndex - 1].waitingDialogue;
+        }
+
+        return null;
     }
 
     void DialogueFinished(Conversation finishedConversation)
