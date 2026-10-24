@@ -3,7 +3,282 @@ guid: 3adc9ff442a006741bf2c4502cc7e32c
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: all_props_Group29913Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: all_props_Group63795Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: all_props_Group63796Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: all_props_pCube75Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: all_props_pSphere4Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pSphere5Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33438Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33453Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33468Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33483Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33498Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33513Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33528Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33543Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33558Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33573Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33588Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33603Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33618Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33633Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33648Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33663Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33678Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33693Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33708Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33723Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33738Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33753Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33768Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33783Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33798Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33813Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33828Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33843Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33858Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33873Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33888Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33903Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33918Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33933Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33948Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33963Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33978Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group33993Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group34008Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group34023Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group34038Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group34053Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group34068Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group34083Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group34098Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group34113Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group34128Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_Group34143Mat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: priest_posed_arm_clothMat
+    second: {fileID: 2100000, guid: 614d87c9d5a987e48a158361f44661dc, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
