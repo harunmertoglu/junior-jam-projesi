@@ -5,6 +5,8 @@ public class PlayerMovement : MonoBehaviour
 {
     public static event Action OnJumped;
     public static event Action<bool> OnGroundedChanged;
+    // Bounce pad gibi bir şey oyuncuyu fırlattı. PlayerDash dinler, dash'i keser
+    public static event Action OnLaunched;
 
     [Header("References")]
     [SerializeField] Transform playerVisualTransform;
@@ -125,6 +127,8 @@ public class PlayerMovement : MonoBehaviour
         if (isGliding)
             DetachFromGlider(currentGlideObject != null ? currentGlideObject.CurrentVelocity : Vector3.zero);
         isDashing = true;
+        // Dash basıldıysa ped fırlatması biter, dash her zaman atılabilir
+        launchEndTime = -10f;
     }
 
     void DashEnded()
@@ -321,7 +325,7 @@ public class PlayerMovement : MonoBehaviour
         OnJumped?.Invoke();
     }
 
-    public bool IsLaunched()
+    bool IsLaunched()
     {
         return Time.time < launchEndTime;
     }
@@ -352,6 +356,7 @@ public class PlayerMovement : MonoBehaviour
     {
         playerRigidbody.linearVelocity = launchVelocity;
         launchEndTime = Time.time + launchDuration;
+        OnLaunched?.Invoke();
     }
 
     public Vector3 GetFacingDirection()

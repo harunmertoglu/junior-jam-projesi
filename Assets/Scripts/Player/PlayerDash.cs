@@ -55,6 +55,7 @@ public class PlayerDash : MonoBehaviour
         InputManager.OnDash += DashInputs;
         PlayerMovement.OnGroundedChanged += GroundedChanged;
         RespawnManager.OnPlayerRespawned += PlayerRespawned;
+        PlayerMovement.OnLaunched += PlayerLaunched;
     }
 
     void OnDisable()
@@ -62,6 +63,7 @@ public class PlayerDash : MonoBehaviour
         InputManager.OnDash -= DashInputs;
         PlayerMovement.OnGroundedChanged -= GroundedChanged;
         RespawnManager.OnPlayerRespawned -= PlayerRespawned;
+        PlayerMovement.OnLaunched -= PlayerLaunched;
     }
 
     void DashInputs()
@@ -98,6 +100,17 @@ public class PlayerDash : MonoBehaviour
         ClearRecallPoint();
     }
 
+    void PlayerLaunched()
+    {
+        // Dash'le pede çarptıysak dash biter, pedin verdiği hızı ezmeyelim
+        if (isDashing)
+        {
+            StopCoroutine(dashCoroutine);
+            isDashing = false;
+            OnDashEnded?.Invoke();
+        }
+    }
+
     IEnumerator DashRoutine()
     {
         isDashing = true;
@@ -117,14 +130,6 @@ public class PlayerDash : MonoBehaviour
 
         while (dashTimer < dashDuration)
         {
-            // Bounce pad gibi bir şey hızı ele geçirdiyse dash'i kes, hızını ezme
-            if (playerMovement.IsLaunched())
-            {
-                isDashing = false;
-                OnDashEnded?.Invoke();
-                yield break;
-            }
-
             // Yerçekimi yok, sadece ileri
             playerRigidbody.linearVelocity = dashDirection * dashSpeed;
             dashTimer += Time.fixedDeltaTime;
