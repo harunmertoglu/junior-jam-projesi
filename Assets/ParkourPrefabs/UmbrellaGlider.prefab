@@ -82,7 +82,6 @@ MonoBehaviour:
   moveSpeed: 5
   waitForPlayer: 1
   hangOffset: {x: 0, y: -0.38, z: 0}
-  loopBackOnArrive: 0
 --- !u!135 &67653562736225634
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -114,11 +113,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8244806462015036943, guid: afdb46041dad7184581e47f86539e641, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.34
       objectReference: {fileID: 0}
     - target: {fileID: -8244806462015036943, guid: afdb46041dad7184581e47f86539e641, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.42
       objectReference: {fileID: 0}
     - target: {fileID: -8244806462015036943, guid: afdb46041dad7184581e47f86539e641, type: 3}
       propertyPath: m_LocalPosition.z
@@ -126,7 +125,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8244806462015036943, guid: afdb46041dad7184581e47f86539e641, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9197826
       objectReference: {fileID: 0}
     - target: {fileID: -8244806462015036943, guid: afdb46041dad7184581e47f86539e641, type: 3}
       propertyPath: m_LocalRotation.x
@@ -138,7 +137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8244806462015036943, guid: afdb46041dad7184581e47f86539e641, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0.39242846
       objectReference: {fileID: 0}
     - target: {fileID: -8244806462015036943, guid: afdb46041dad7184581e47f86539e641, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -150,7 +149,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8244806462015036943, guid: afdb46041dad7184581e47f86539e641, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 46.211
       objectReference: {fileID: 0}
     - target: {fileID: -225454366372491612, guid: afdb46041dad7184581e47f86539e641, type: 3}
       propertyPath: m_Name
