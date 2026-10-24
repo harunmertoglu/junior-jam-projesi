@@ -39,7 +39,7 @@ public class RisingFlame : MonoBehaviour
 
         while (true)
         {
-            // Mevsim adadan adaya değişir (IslandZone), bu yüzden her turun başında yeniden okunur
+            // Mevsim oyuncu ilerledikçe değişir (SeasonManager), bu yüzden her turun başında yeniden okunur
             UpdateTimeMultiplier();
 
             yield return new WaitForSeconds(loweredDuration * timeMultiplier);
