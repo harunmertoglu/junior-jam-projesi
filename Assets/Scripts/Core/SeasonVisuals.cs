@@ -52,6 +52,13 @@ public class SeasonVisuals : MonoBehaviour
     [SerializeField] ParticleSystem snowParticles;
     [SerializeField] float leafMaxEmissionRate = 10f;
     [SerializeField] float snowMaxEmissionRate = 40f;
+    // Yapraklar bu mevsim değerinde biter, kış adasının yakınında hiç yaprak olmasın
+    [SerializeField] float leafEndSeasonValue = 0.65f;
+    // Kar bu mevsim değerinden sonra başlar, sonbahar adasının yakınında hiç kar olmasın
+    [SerializeField] float snowStartSeasonValue = 0.35f;
+
+    ParticleSystem.EmissionModule leafEmission;
+    ParticleSystem.EmissionModule snowEmission;
 
     Material skyboxMaterial;
     float lastAppliedSeasonValue = -1f;
@@ -61,6 +68,7 @@ public class SeasonVisuals : MonoBehaviour
         FindSunLight();
         CreateSkyboxCopy();
         EnableCameraPostProcessing();
+        SetupParticles();
         ApplySeason(GetSeasonValue());
     }
 
@@ -104,6 +112,22 @@ public class SeasonVisuals : MonoBehaviour
 
         skyboxMaterial = new Material(RenderSettings.skybox);
         RenderSettings.skybox = skyboxMaterial;
+    }
+
+    // Kamera hareket edince fazladan partikül çıkmasın, miktarı sadece mevsim belirlesin
+    void SetupParticles()
+    {
+        if (leafParticles != null)
+        {
+            leafEmission = leafParticles.emission;
+            leafEmission.rateOverDistanceMultiplier = 0f;
+        }
+
+        if (snowParticles != null)
+        {
+            snowEmission = snowParticles.emission;
+            snowEmission.rateOverDistanceMultiplier = 0f;
+        }
     }
 
     // Volume'lar sadece kamerada post-processing açıksa görünür
@@ -194,14 +218,16 @@ public class SeasonVisuals : MonoBehaviour
         // Yapraklar azalır, kar artar
         if (leafParticles != null)
         {
-            ParticleSystem.EmissionModule leafEmission = leafParticles.emission;
-            leafEmission.rateOverTimeMultiplier = Mathf.Lerp(leafMaxEmissionRate, 0f, seasonValue);
+            // Örnek: bitiş 0.65 iken mevsim 0 -> 0, 0.325 -> 0.5, 0.8 -> 1
+            float leafFadeAmount = Mathf.InverseLerp(0f, leafEndSeasonValue, seasonValue);
+            leafEmission.rateOverTimeMultiplier = Mathf.Lerp(leafMaxEmissionRate, 0f, leafFadeAmount);
         }
 
         if (snowParticles != null)
         {
-            ParticleSystem.EmissionModule snowEmission = snowParticles.emission;
-            snowEmission.rateOverTimeMultiplier = Mathf.Lerp(0f, snowMaxEmissionRate, seasonValue);
+            // Örnek: başlangıç 0.35 iken mevsim 0.2 -> 0, 0.675 -> 0.5, 1 -> 1
+            float snowAmount = Mathf.InverseLerp(snowStartSeasonValue, 1f, seasonValue);
+            snowEmission.rateOverTimeMultiplier = Mathf.Lerp(0f, snowMaxEmissionRate, snowAmount);
         }
     }
 }
