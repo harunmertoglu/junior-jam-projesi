@@ -77,7 +77,7 @@ Kaynak: "Sonbahardan Kışa — Oyun Tasarım Dokümanı" (GDD). Kararlar oradan
 ## Sahne yapısı ve ekip kuralları
 - **Tüm adalar TEK gameplay sahnesinde:** `Assets/TestScene/TestScene.unity` (ileride adı değişebilir). Sahibi Selim, başkası doğrudan değiştirmez. Diğer sahneler sadece başlangıç/bitiş sinematikleri.
 - Ada geçişi sahne yüklemez: `IslandExit` oyuncuyu sonraki adanın başlangıç noktasına taşır, son ada bitiş sinematiğini yükler.
-- Mevsim sahneye göre değil adaya göre değişir: her adayı kaplayan `IslandZone` trigger'ı, oyuncu girince `SeasonManager.SetIslandSeason` çağırır. Mevsimi okuyan kod değeri saklamasın, her kullanımda `SeasonManager.Instance` üzerinden okusun.
+- Mevsim oyuncunun konumuna göre yumuşakça değişir: adaların ortasına `SeasonPoint` konur (sonbahar 0, orta ada 0.5, kış 1), `SeasonManager` en yakın iki noktayı uzaklığa göre karıştırıp değeri saniyede en fazla 0.25 kaydırır. Görünüm (gökyüzü, güneş, sis, ortam, renk tonu Volume'ları, parçacıklar) `SeasonVisuals`'tan gelir: `Assets/Prefabs/SeasonAtmosphere.prefab` sahneye bir kez konur. Mevsimi okuyan kod değeri saklamasın, her kullanımda `SeasonManager.Instance` üzerinden okusun.
 - Environment tasarımı `UpdateScene1` / `UpdateScene2` gibi kopya sahnelerde yapılır, tek kök obje altında **prefab** olarak TestScene'e bir kez konur.
 - Karakter `Assets/3rdPartyAssets/Character/RaincoatGirl.prefab`. Karakter değişiklikleri sahnede değil prefab'da yapılır.
 - Unity sahne ve prefab dosyaları git'te birleştirilemez: her sahne/prefab dosyasının aynı anda tek sahibi olsun. Kod dosyaları paylaşılabilir.
