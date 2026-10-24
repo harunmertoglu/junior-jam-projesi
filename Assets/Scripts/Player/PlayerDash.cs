@@ -21,10 +21,10 @@ public class PlayerDash : MonoBehaviour
     [SerializeField] float dashExitSpeed = 6f;
 
     [Header("Recall")]
-    // SeasonManager yoksa kullanılır
-    [SerializeField] float defaultRecallDuration = 10f;
+    // Geri dönüş noktasının kaç saniye kalacağı
+    [SerializeField] float defaultRecallDuration = 4f;
     // Sürenin son kaç saniyesinde işaret yanıp sönsün
-    [SerializeField] float blinkDuration = 2f;
+    [SerializeField] float blinkDuration = 1f;
     [SerializeField] float blinkInterval = 0.15f;
     // Geri dönüş noktasını gösteren placeholder (ör. yassı silindir)
     [SerializeField] GameObject recallMarkerPrefab;
@@ -34,9 +34,9 @@ public class PlayerDash : MonoBehaviour
     GameObject recallMarker;
     Vector3 recallPosition;
     bool hasRecallPoint;
-    bool canDash = true;
     bool isDashing;
     bool isPlayerGrounded;
+    bool isInDialogue;
     Coroutine dashCoroutine;
     Coroutine recallTimerCoroutine;
 
@@ -56,6 +56,8 @@ public class PlayerDash : MonoBehaviour
         InputManager.OnDash += DashInputs;
         PlayerMovement.OnGroundedChanged += GroundedChanged;
         RespawnManager.OnPlayerRespawned += PlayerRespawned;
+        PlayerMovement.OnLaunched += PlayerLaunched;
+        DialogueManager.OnDialogueChanged += DialogueChanged;
     }
 
     void OnDisable()
@@ -63,11 +65,19 @@ public class PlayerDash : MonoBehaviour
         InputManager.OnDash -= DashInputs;
         PlayerMovement.OnGroundedChanged -= GroundedChanged;
         RespawnManager.OnPlayerRespawned -= PlayerRespawned;
+        PlayerMovement.OnLaunched -= PlayerLaunched;
+        DialogueManager.OnDialogueChanged -= DialogueChanged;
+    }
+
+    void DialogueChanged(bool isOpen)
+    {
+        isInDialogue = isOpen;
     }
 
     void DashInputs()
     {
-        if (isDashing)
+        // Diyalogda dash ve geri dönüş yok
+        if (isDashing || isInDialogue)
         {
             return;
         }
@@ -77,7 +87,7 @@ public class PlayerDash : MonoBehaviour
         {
             Recall();
         }
-        else if (canDash)
+        else
         {
             dashCoroutine = StartCoroutine(DashRoutine());
         }
@@ -86,12 +96,6 @@ public class PlayerDash : MonoBehaviour
     void GroundedChanged(bool value)
     {
         isPlayerGrounded = value;
-
-        // Yere basınca dash hakkı geri gelir
-        if (value && !isDashing)
-        {
-            canDash = true;
-        }
     }
 
     void PlayerRespawned()
@@ -105,10 +109,20 @@ public class PlayerDash : MonoBehaviour
         ClearRecallPoint();
     }
 
+    void PlayerLaunched()
+    {
+        // Dash'le pede çarptıysak dash biter, pedin verdiği hızı ezmeyelim
+        if (isDashing)
+        {
+            StopCoroutine(dashCoroutine);
+            isDashing = false;
+            OnDashEnded?.Invoke();
+        }
+    }
+
     IEnumerator DashRoutine()
     {
         isDashing = true;
-        canDash = false;
 
         Vector3 dashDirection = GetDashDirection();
         // Karakter dash yönüne (kameranın baktığı yöne) baksın, yoksa geri geri uçabilir
@@ -158,10 +172,6 @@ public class PlayerDash : MonoBehaviour
     {
         isDashing = false;
         playerRigidbody.linearVelocity = exitVelocity;
-
-        // Havada bittiyse yere inene kadar yeni dash yok
-        canDash = isPlayerGrounded;
-
         OnDashEnded?.Invoke();
     }
 
@@ -171,10 +181,6 @@ public class PlayerDash : MonoBehaviour
         ClearRecallPoint();
 
         playerMovement.TeleportTo(targetPosition);
-
-        // Havadaki bir noktaya dönüldüyse yere inmeden dash yok.
-        // Yerdeyse bir sonraki zemin kontrolünde hak geri gelir.
-        canDash = false;
 
         OnRecalled?.Invoke();
     }
@@ -211,7 +217,8 @@ public class PlayerDash : MonoBehaviour
 
     IEnumerator RecallTimerRoutine()
     {
-        float recallDuration = SeasonManager.Instance != null ? SeasonManager.Instance.GetRecallDuration() : defaultRecallDuration;
+        // Şimdilik süre sadece buradan gelir. Ada sistemi kurulunca adaya göre değişecek
+        float recallDuration = defaultRecallDuration;
 
         yield return new WaitForSeconds(Mathf.Max(0f, recallDuration - blinkDuration));
 

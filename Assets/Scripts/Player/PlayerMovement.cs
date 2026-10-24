@@ -5,6 +5,8 @@ public class PlayerMovement : MonoBehaviour
 {
     public static event Action OnJumped;
     public static event Action<bool> OnGroundedChanged;
+    // Bounce pad gibi bir şey oyuncuyu fırlattı. PlayerDash dinler, dash'i keser
+    public static event Action OnLaunched;
 
     [Header("References")]
     [SerializeField] Transform playerVisualTransform;
@@ -54,11 +56,17 @@ public class PlayerMovement : MonoBehaviour
     bool isDashing;
     bool isJumpHeld;
     bool isSprintHeld;
+    bool isInDialogue;
     float lastGroundedTime = -10f;
     float lastJumpPressedTime = -10f;
     float currentSlipperiness;
     float launchEndTime = -10f;
     Vector3 groundNormal = Vector3.up;
+    bool isGliding;
+    Transform glideCarrier;
+    Vector3 glideOffset;
+    GlideObject currentGlideObject;
+    bool isLockedToSurface;
 
     void Awake()
     {
@@ -85,6 +93,7 @@ public class PlayerMovement : MonoBehaviour
         InputManager.OnSprint += SprintInputs;
         PlayerDash.OnDashStarted += DashStarted;
         PlayerDash.OnDashEnded += DashEnded;
+        DialogueManager.OnDialogueChanged += DialogueChanged;
     }
 
     void OnDisable()
@@ -94,6 +103,7 @@ public class PlayerMovement : MonoBehaviour
         InputManager.OnSprint -= SprintInputs;
         PlayerDash.OnDashStarted -= DashStarted;
         PlayerDash.OnDashEnded -= DashEnded;
+        DialogueManager.OnDialogueChanged -= DialogueChanged;
     }
 
     void MoveInputs(Vector2 moveInput)
@@ -103,6 +113,13 @@ public class PlayerMovement : MonoBehaviour
 
     void JumpInputs(bool value)
     {
+        // Diyalogda zıplama tuşu sonraki satıra geçer, karakteri zıplatmaz
+        if (isInDialogue)
+        {
+            isJumpHeld = false;
+            return;
+        }
+
         isJumpHeld = value;
 
         if (value)
@@ -118,12 +135,23 @@ public class PlayerMovement : MonoBehaviour
 
     void DashStarted(Vector3 dashStartPosition)
     {
+        if (isGliding)
+            DetachFromGlider(currentGlideObject != null ? currentGlideObject.CurrentVelocity : Vector3.zero);
+        if (isLockedToSurface)
+            UnlockFromSurface();
         isDashing = true;
+        // Dash basıldıysa ped fırlatması biter, dash her zaman atılabilir
+        launchEndTime = -10f;
     }
 
     void DashEnded()
     {
         isDashing = false;
+    }
+
+    void DialogueChanged(bool isOpen)
+    {
+        isInDialogue = isOpen;
     }
 
     void Update()
@@ -142,9 +170,36 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        // Glider'a bağlıyken pozisyonu carrier takip eder, hareket/yerçekimi iptal
+        if (isGliding)
+        {
+            TryJump();
+            if (!isGliding) return; // zıplayarak ayrıldı
+
+            playerRigidbody.linearVelocity = Vector3.zero;
+            playerRigidbody.MovePosition(glideCarrier.position + glideOffset);
+            return;
+        }
+
         playerVelocity = playerRigidbody.linearVelocity;
         SetPlayerMovement();
         ApplySlopeSlide();
+
+        if (isLockedToSurface)
+        {
+            lastGroundedTime = Time.time; // yüzeyde kilitliyken zıplama geçerli
+            TryJump();
+            if (playerVelocity.y > 0f) // zıpladı, bağı kır
+            {
+                isLockedToSurface = false;
+                playerRigidbody.linearVelocity = playerVelocity;
+                return;
+            }
+            playerVelocity.y = 0f;
+            playerRigidbody.linearVelocity = playerVelocity;
+            return;
+        }
+
         ApplyGravity();
         TryJump();
         playerRigidbody.linearVelocity = playerVelocity;
@@ -161,11 +216,17 @@ public class PlayerMovement : MonoBehaviour
         cameraDirectionRight.Normalize();
 
         moveDirection = cameraDirectionForward * moveInput.y + cameraDirectionRight * moveInput.x;
+
+        // Diyalogda karakter yürümez, yerinde yavaşça durur
+        if (isInDialogue)
+        {
+            moveDirection = Vector3.zero;
+        }
     }
 
     void UpdateVisualRotation()
     {
-        if (isDashing || moveDirection.sqrMagnitude < 0.01f)
+        if (isDashing || isGliding || moveDirection.sqrMagnitude < 0.01f)
         {
             return;
         }
@@ -216,7 +277,7 @@ public class PlayerMovement : MonoBehaviour
         float currentRunSpeed = isSprintHeld ? playerRunSpeed * sprintSpeedMultiplier : playerRunSpeed;
         Vector3 targetVelocity = moveDirection * currentRunSpeed;
 
-        float control = isGrounded ? Mathf.Lerp(groundControl, slipperyGroundControl, currentSlipperiness) : airControl;
+        float control = (isGrounded || isLockedToSurface) ? Mathf.Lerp(groundControl, slipperyGroundControl, currentSlipperiness) : airControl;
         if (IsLaunched())
         {
             control = launchControl;
@@ -274,6 +335,19 @@ public class PlayerMovement : MonoBehaviour
     void TryJump()
     {
         bool isJumpBuffered = Time.time - lastJumpPressedTime <= jumpBufferTime;
+
+        // Glider'dayken: ayrıl ve objenin yatay momentumunu koruyarak zıpla
+        if (isGliding)
+        {
+            if (!isJumpBuffered) return;
+            lastJumpPressedTime = -10f;
+            Vector3 carrierVel = currentGlideObject != null ? currentGlideObject.CurrentVelocity : Vector3.zero;
+            float jumpVel = Mathf.Sqrt(2f * gravity * jumpHeight);
+            DetachFromGlider(new Vector3(carrierVel.x, jumpVel, carrierVel.z));
+            OnJumped?.Invoke();
+            return;
+        }
+
         bool isInCoyoteTime = Time.time - lastGroundedTime <= coyoteTime;
 
         if (!isJumpBuffered || !isInCoyoteTime)
@@ -296,11 +370,33 @@ public class PlayerMovement : MonoBehaviour
         return Time.time < launchEndTime;
     }
 
+    public void AttachToGlider(Transform carrier, GlideObject glideObject)
+    {
+        isGliding = true;
+        glideCarrier = carrier;
+        currentGlideObject = glideObject;
+        // Oyuncuyu hangPoint'e ışınla, sonra offset'i hesapla
+        playerRigidbody.position = glideObject.GetSnapPosition();
+        glideOffset = playerRigidbody.position - carrier.position;
+        playerRigidbody.linearVelocity = Vector3.zero;
+    }
+
+    public void DetachFromGlider(Vector3 exitVelocity)
+    {
+        if (!isGliding) return;
+        isGliding = false;
+        currentGlideObject?.OnPlayerDetached();
+        currentGlideObject = null;
+        glideCarrier = null;
+        playerRigidbody.linearVelocity = exitVelocity;
+    }
+
     // Zıplatma pedi gibi şeyler kullanır. Hızı verir, kısa süre kontrolü azaltır
     public void Launch(Vector3 launchVelocity)
     {
         playerRigidbody.linearVelocity = launchVelocity;
         launchEndTime = Time.time + launchDuration;
+        OnLaunched?.Invoke();
     }
 
     public Vector3 GetFacingDirection()
@@ -326,8 +422,21 @@ public class PlayerMovement : MonoBehaviour
         return playerRigidbody.position.y - playerCollider.bounds.min.y;
     }
 
+    public void LockToSurface()
+    {
+        isLockedToSurface = true;
+        playerRigidbody.linearVelocity = new Vector3(playerRigidbody.linearVelocity.x, 0f, playerRigidbody.linearVelocity.z);
+    }
+
+    public void UnlockFromSurface()
+    {
+        isLockedToSurface = false;
+    }
+
     public void TeleportTo(Vector3 targetPosition)
     {
+        if (isLockedToSurface)
+            UnlockFromSurface();
         playerRigidbody.linearVelocity = Vector3.zero;
         playerRigidbody.position = targetPosition;
         transform.position = targetPosition;

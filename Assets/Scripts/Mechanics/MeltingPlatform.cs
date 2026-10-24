@@ -53,8 +53,7 @@ public class MeltingPlatform : MonoBehaviour
             meltTimer += Time.deltaTime;
             float meltProgress = meltTimer / currentMeltDuration;
 
-            // Eridikçe yüksekliği %30'a kadar iner, oyuncu ne kadar kaldığını görür
-            float heightScale = Mathf.Lerp(1f, 0.3f, meltProgress);
+            float heightScale = Mathf.Lerp(1f, 0f, meltProgress);
             platformVisual.localScale = new Vector3(visualStartScale.x, visualStartScale.y * heightScale, visualStartScale.z);
             yield return null;
         }
