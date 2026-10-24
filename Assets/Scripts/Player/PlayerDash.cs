@@ -34,7 +34,6 @@ public class PlayerDash : MonoBehaviour
     GameObject recallMarker;
     Vector3 recallPosition;
     bool hasRecallPoint;
-    bool canDash = true;
     bool isDashing;
     bool isPlayerGrounded;
     Coroutine dashCoroutine;
@@ -77,7 +76,7 @@ public class PlayerDash : MonoBehaviour
         {
             Recall();
         }
-        else if (canDash)
+        else
         {
             dashCoroutine = StartCoroutine(DashRoutine());
         }
@@ -86,12 +85,6 @@ public class PlayerDash : MonoBehaviour
     void GroundedChanged(bool value)
     {
         isPlayerGrounded = value;
-
-        // Yere basınca dash hakkı geri gelir
-        if (value && !isDashing)
-        {
-            canDash = true;
-        }
     }
 
     void PlayerRespawned()
@@ -108,7 +101,6 @@ public class PlayerDash : MonoBehaviour
     IEnumerator DashRoutine()
     {
         isDashing = true;
-        canDash = false;
 
         Vector3 dashDirection = GetDashDirection();
         // Karakter dash yönüne (kameranın baktığı yöne) baksın, yoksa geri geri uçabilir
@@ -125,6 +117,14 @@ public class PlayerDash : MonoBehaviour
 
         while (dashTimer < dashDuration)
         {
+            // Bounce pad gibi bir şey hızı ele geçirdiyse dash'i kes, hızını ezme
+            if (playerMovement.IsLaunched())
+            {
+                isDashing = false;
+                OnDashEnded?.Invoke();
+                yield break;
+            }
+
             // Yerçekimi yok, sadece ileri
             playerRigidbody.linearVelocity = dashDirection * dashSpeed;
             dashTimer += Time.fixedDeltaTime;
@@ -158,10 +158,6 @@ public class PlayerDash : MonoBehaviour
     {
         isDashing = false;
         playerRigidbody.linearVelocity = exitVelocity;
-
-        // Havada bittiyse yere inene kadar yeni dash yok
-        canDash = isPlayerGrounded;
-
         OnDashEnded?.Invoke();
     }
 
@@ -171,10 +167,6 @@ public class PlayerDash : MonoBehaviour
         ClearRecallPoint();
 
         playerMovement.TeleportTo(targetPosition);
-
-        // Havadaki bir noktaya dönüldüyse yere inmeden dash yok.
-        // Yerdeyse bir sonraki zemin kontrolünde hak geri gelir.
-        canDash = false;
 
         OnRecalled?.Invoke();
     }

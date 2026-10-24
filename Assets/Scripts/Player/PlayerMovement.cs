@@ -59,6 +59,10 @@ public class PlayerMovement : MonoBehaviour
     float currentSlipperiness;
     float launchEndTime = -10f;
     Vector3 groundNormal = Vector3.up;
+    bool isGliding;
+    Transform glideCarrier;
+    Vector3 glideOffset;
+    GlideObject currentGlideObject;
 
     void Awake()
     {
@@ -118,6 +122,8 @@ public class PlayerMovement : MonoBehaviour
 
     void DashStarted(Vector3 dashStartPosition)
     {
+        if (isGliding)
+            DetachFromGlider(currentGlideObject != null ? currentGlideObject.CurrentVelocity : Vector3.zero);
         isDashing = true;
     }
 
@@ -139,6 +145,17 @@ public class PlayerMovement : MonoBehaviour
         // Dash sırasında hızı PlayerDash yönetir
         if (isDashing)
         {
+            return;
+        }
+
+        // Glider'a bağlıyken pozisyonu carrier takip eder, hareket/yerçekimi iptal
+        if (isGliding)
+        {
+            TryJump();
+            if (!isGliding) return; // zıplayarak ayrıldı
+
+            playerRigidbody.linearVelocity = Vector3.zero;
+            playerRigidbody.MovePosition(glideCarrier.position + glideOffset);
             return;
         }
 
@@ -165,7 +182,7 @@ public class PlayerMovement : MonoBehaviour
 
     void UpdateVisualRotation()
     {
-        if (isDashing || moveDirection.sqrMagnitude < 0.01f)
+        if (isDashing || isGliding || moveDirection.sqrMagnitude < 0.01f)
         {
             return;
         }
@@ -274,6 +291,19 @@ public class PlayerMovement : MonoBehaviour
     void TryJump()
     {
         bool isJumpBuffered = Time.time - lastJumpPressedTime <= jumpBufferTime;
+
+        // Glider'dayken: ayrıl ve objenin yatay momentumunu koruyarak zıpla
+        if (isGliding)
+        {
+            if (!isJumpBuffered) return;
+            lastJumpPressedTime = -10f;
+            Vector3 carrierVel = currentGlideObject != null ? currentGlideObject.CurrentVelocity : Vector3.zero;
+            float jumpVel = Mathf.Sqrt(2f * gravity * jumpHeight);
+            DetachFromGlider(new Vector3(carrierVel.x, jumpVel, carrierVel.z));
+            OnJumped?.Invoke();
+            return;
+        }
+
         bool isInCoyoteTime = Time.time - lastGroundedTime <= coyoteTime;
 
         if (!isJumpBuffered || !isInCoyoteTime)
@@ -291,9 +321,30 @@ public class PlayerMovement : MonoBehaviour
         OnJumped?.Invoke();
     }
 
-    bool IsLaunched()
+    public bool IsLaunched()
     {
         return Time.time < launchEndTime;
+    }
+
+    public void AttachToGlider(Transform carrier, GlideObject glideObject)
+    {
+        isGliding = true;
+        glideCarrier = carrier;
+        currentGlideObject = glideObject;
+        // Oyuncuyu hangPoint'e ışınla, sonra offset'i hesapla
+        playerRigidbody.position = glideObject.GetSnapPosition();
+        glideOffset = playerRigidbody.position - carrier.position;
+        playerRigidbody.linearVelocity = Vector3.zero;
+    }
+
+    public void DetachFromGlider(Vector3 exitVelocity)
+    {
+        if (!isGliding) return;
+        isGliding = false;
+        currentGlideObject?.OnPlayerDetached();
+        currentGlideObject = null;
+        glideCarrier = null;
+        playerRigidbody.linearVelocity = exitVelocity;
     }
 
     // Zıplatma pedi gibi şeyler kullanır. Hızı verir, kısa süre kontrolü azaltır
